@@ -1,0 +1,26 @@
+# OS Files
+.DS_Store
+Thumbs.db
+*.Zone.Identifier
+
+# Python Environment
+ai-frontend-python/.venv/
+ai-frontend-python/__pycache__/
+*.pyc
+
+# Java / Maven Build Files
+backend-java/target/
+*.class
+
+# IDE Settings
+.vscode/
+.idea/
+
+# Large Auto-Generated Project Data
+# (We ignore these because anyone cloning the repo will generate their own)
+ai-frontend-python/extracted_images/*.png
+ai-frontend-python/extracted_images/*.jpg
+ai-frontend-python/visual_index.pkl
+
+# Note: We are NOT ignoring the data-corpus folder! 
+# You should keep 3-5 PDFs in there so anyone downloading your repo has sample data to test.
