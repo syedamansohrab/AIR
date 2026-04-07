@@ -46,7 +46,7 @@ Ensure you have a folder named `data-corpus` in the root directory containing yo
 ### Step 2: Start the Java Backend (Terminal 1)
 This initiates the Lucene indexing process and opens the REST API on port 8080.
 
-```bash
+
 # Navigate to the backend folder
 cd backend-java
 
@@ -55,7 +55,7 @@ mvn clean compile exec:java -Dexec.mainClass="com.smartcs.indexer.Main"
 
 (⚠️ Do not proceed to Step 3 until you see the message: API is LIVE on http://localhost:8080)
 
-Step 3: Setup the Python AI Environment (Terminal 2)
+###Step 3: Setup the Python AI Environment (Terminal 2)
 Open a new terminal window to configure the local AI environment.
 
 # Navigate to the frontend folder
@@ -71,7 +71,7 @@ source .venv/bin/activate
 # Install all required AI and UI libraries
 pip install -r requirements.txt
 
-Step 4: Extract Images & Build the Visual AI Index
+### Step 4: Extract Images & Build the Visual AI Index
 Before searching, you must extract the diagrams from the PDFs and pass them through the ResNet50 model to create the mathematical visual index.
 
 # 1. Extract diagrams from the PDFs
@@ -80,7 +80,7 @@ python extract_images.py
 # 2. Convert images to PyTorch Tensors (This may take a moment)
 python build_visual_index.py
 
-Step 5: Launch the UI
+### Step 5: Launch the UI
 Once the visual index is built, launch the Streamlit web application.
 
 streamlit run app.py
