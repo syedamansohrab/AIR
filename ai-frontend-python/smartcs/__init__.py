@@ -1,0 +1,1 @@
+"""SmartCS frontend support package."""
