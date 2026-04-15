@@ -1,0 +1,22 @@
+# ── Python AI Engine ──
+.venv/
+__pycache__/
+*.pyc
+*.pkl
+*.sqlite
+extracted_images/
+ai-frontend-python/.env
+ai-frontend-python/test_*.py
+ai-frontend-python/debug_*.py
+ai-frontend-python/fix_*.py
+ai-frontend-python/output.pdf
+
+# ── Java Backend ──
+backend-java/target/
+*.class
+
+# ── General ──
+.git/
+.gitignore
+.codex
+README.md

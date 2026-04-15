@@ -6,6 +6,7 @@ Thumbs.db
 # Python Environment
 ai-frontend-python/.venv/
 ai-frontend-python/__pycache__/
+**/__pycache__/
 *.pyc
 
 # Java / Maven Build Files
@@ -16,11 +17,16 @@ backend-java/target/
 .vscode/
 .idea/
 
-# Large Auto-Generated Project Data
-# (We ignore these because anyone cloning the repo will generate their own)
+# Secrets (NEVER commit real keys)
+ai-frontend-python/.env
+
+# Large Auto-Generated Files
 ai-frontend-python/extracted_images/*.png
 ai-frontend-python/extracted_images/*.jpg
 ai-frontend-python/visual_index.pkl
 
-# Note: We are NOT ignoring the data-corpus folder! 
-# You should keep 3-5 PDFs in there so anyone downloading your repo has sample data to test.
+# Test & Debug Scripts (dev-only, not needed by users)
+ai-frontend-python/test_*.py
+ai-frontend-python/debug_*.py
+ai-frontend-python/fix_*.py
+ai-frontend-python/output.pdf

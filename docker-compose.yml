@@ -1,0 +1,39 @@
+# ==============================
+# SmartCS Docker Compose
+# ==============================
+# All Docker files live at the project root.
+# Usage:
+#   1. Copy ai-frontend-python/.env.example to ai-frontend-python/.env and fill in your keys
+#   2. Run: docker compose up --build
+#   3. Open: http://localhost:8000
+
+version: '3.8'
+
+services:
+  # ── Java Lucene Backend ──
+  smartcs-java-backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.java
+    container_name: smartcs-java
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./data-corpus:/app/data-corpus:ro
+    restart: unless-stopped
+
+  # ── Python AI Engine (FastAPI + Pinecone + Gemini) ──
+  smartcs-ai-engine:
+    build:
+      context: .
+      dockerfile: Dockerfile.python
+    container_name: smartcs-ai
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./ai-frontend-python/.env
+    volumes:
+      - ./ai-frontend-python/extracted_images:/app/extracted_images
+    depends_on:
+      - smartcs-java-backend
+    restart: unless-stopped
