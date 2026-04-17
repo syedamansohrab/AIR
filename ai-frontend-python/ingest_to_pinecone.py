@@ -1,6 +1,7 @@
 import os
 import pickle
 import fitz
+import time
 import google.generativeai as genai
 from pinecone import Pinecone
 from dotenv import load_dotenv
@@ -69,12 +70,22 @@ def ingest_text_vectors():
         chunks = chunk_text(text)
         vectors = []
         for i, chunk in enumerate(chunks):
-            result = genai.embed_content(
-                model="models/gemini-embedding-001",
-                content=chunk,
-                task_type="retrieval_document",
-            )
-            embedding = result['embedding']
+            success = False
+            while not success:
+                try:
+                    result = genai.embed_content(
+                        model="models/gemini-embedding-001",
+                        content=chunk,
+                        task_type="retrieval_document",
+                    )
+                    embedding = result['embedding']
+                    success = True
+                except Exception as e:
+                    if "429" in str(e) or "ResourceExhausted" in str(type(e)):
+                        print("  ... Gemini API rate limit hit, waiting 10 seconds before retrying...")
+                        time.sleep(10)
+                    else:
+                        raise e
             
             vectors.append({
                 "id": f"{patent}-chunk-{i}",

@@ -2,7 +2,7 @@ import os
 import torch
 import torchvision.transforms as transforms
 import torchvision.models as models
-from PIL import Image
+from PIL import Image, ImageOps
 import pickle
 import numpy as np
 import warnings
@@ -45,8 +45,18 @@ def build_index():
             
             try:
                 img_path = os.path.join(IMAGE_DIR, filename)
+                
                 # Convert to RGB (patents are often black and white/grayscale)
-                img = Image.open(img_path).convert('RGB')
+                img = Image.open(img_path)
+                
+                # Visual Preprocessing Layer: Grayscale + Threshold Inversion
+                # Standardize to light-mode for consistency with the pinecone queries
+                grayscale_img = img.convert("L")
+                if np.mean(np.array(grayscale_img)) < 128:
+                    img = ImageOps.invert(img.convert('RGB'))
+                else:
+                    img = img.convert('RGB')
+                    
                 img_t = preprocess(img)
                 batch_t = torch.unsqueeze(img_t, 0)
                 
