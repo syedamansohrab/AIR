@@ -5,7 +5,8 @@ from pinecone import Pinecone
 import torch
 import torchvision.models as models
 import torchvision.transforms as transforms
-from PIL import Image
+from PIL import Image, ImageOps
+import numpy as np
 from dotenv import load_dotenv
 
 from smartcs.config import EXTRACTED_IMAGES_DIR
@@ -39,6 +40,12 @@ def build_image_preprocess():
 def find_visual_matches(uploaded_image: Image.Image, feature_extractor, top_k: int = 3):
     if not pc: raise Exception("Pinecone not configured")
     index = pc.Index("smartcs-patents-vision")
+    
+    # Visual Preprocessing Layer: Grayscale + Threshold Inversion
+    # If the image is "Dark Mode" (average brightness < 128), invert it.
+    grayscale_img = uploaded_image.convert("L")
+    if np.mean(np.array(grayscale_img)) < 128:
+        uploaded_image = ImageOps.invert(uploaded_image)
     
     preprocess = build_image_preprocess()
     img_tensor = preprocess(uploaded_image)
@@ -131,7 +138,7 @@ def global_chat(question: str):
     if not GEMINI_API_KEY:
         raise Exception("Gemini API Key not configured.")
     
-    RELEVANCE_THRESHOLD = 0.82  # Only truly on-topic matches pass through
+    RELEVANCE_THRESHOLD = 0.71  # Only truly on-topic matches pass through
     
     # --- Phase 1: Check local Pinecone vector DB ---
     local_sources = set()
@@ -160,7 +167,7 @@ def global_chat(question: str):
                 if score >= RELEVANCE_THRESHOLD:
                     local_sources.add(match['metadata']['source_patent'])
                     local_context_chunks.append(
-                        f"[{match['metadata']['source_patent']}] (relevance: {score:.2f}) {match['metadata']['text']}"
+                        f"[{match['metadata']['source_patent']}] (relevance: {score:.4f}) {match['metadata']['text']}"
                     )
                 if score > max_score:
                     max_score = score
@@ -173,7 +180,7 @@ def global_chat(question: str):
     
     model = genai.GenerativeModel('gemini-flash-latest')
     
-    if has_local_hits and max_score >= 0.88:
+    if has_local_hits and max_score >= 0.73:
         # HIGH RELEVANCE: Local DB has strong matches — use them primarily
         prompt = f"""You are SmartCS, an expert Patent Intelligence Engine with access to a proprietary patent vector database.
         
